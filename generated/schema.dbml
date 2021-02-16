@@ -1,0 +1,223 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  email String [unique, not null]
+  password String [not null]
+  firstName String
+  lastName String
+  posts Post
+  refreshTokens RefreshToken
+  companyMember CompanyMember
+  verification UserVerification
+  resetPasswordToken String [unique]
+  resetPasswordExpiration DateTime
+  information UserInformation
+  orders Order
+}
+
+Table UserInformation {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  user User [not null]
+  userId Int [not null]
+  address Address
+  birthDate DateTime
+  occupation String
+  gender Gender
+  nationality Country
+}
+
+Table UserVerification {
+  id String [pk]
+  verifiedEmail Boolean [not null, default: false]
+  verifyEmailToken String [unique]
+  verifyEmailExpiration DateTime
+  user User [not null]
+  userId Int [not null]
+}
+
+Table Post {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  published Boolean [not null, default: false]
+  title String [not null]
+  content String
+  author User
+  authorId Int
+}
+
+Table RefreshToken {
+  id String [pk]
+  expiryDate DateTime [not null]
+  user User [not null]
+  userId Int [not null]
+}
+
+Table Company {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  name String [not null]
+  information CompanyInformation
+  members CompanyMember
+  products Product
+  Order Order
+}
+
+Table CompanyInformation {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  company Company [not null]
+  companyId Int [not null]
+  description String
+  categories Category
+  address Address
+  country Country
+  countryId Int
+}
+
+Table CompanyMember {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  company Company [not null]
+  companyId Int [not null]
+  user User [not null]
+  userId Int [not null]
+  roles CompanyMemberRole
+}
+
+Table Product {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  name String [not null]
+  price Int [not null]
+  description String
+  status ProductStatus [not null, default: 'INACTIVE']
+  owner Company [not null]
+  companyId Int [not null]
+}
+
+Table Address {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  country Country [not null]
+  countryId Int [not null]
+  description String
+  postalCode String
+  owner UserInformation
+  ownerId String
+  companyInfos CompanyInformation
+  companyInfoId String
+}
+
+Table Country {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  name String [not null]
+  flag String [not null]
+  code2 String [not null]
+  address Address
+  userInfos UserInformation
+  companyInfos CompanyInformation
+}
+
+Table Category {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  name String [unique, not null]
+  companyInfos CompanyInformation
+}
+
+Table OrderProduct {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  name String [not null]
+  price Int [not null]
+  quantity Int [not null]
+  description String
+  order Order [not null]
+  orderId Int [not null]
+}
+
+Table Order {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  products OrderProduct
+  totalPrice Int [not null]
+  buyer User [not null]
+  userId Int [not null]
+  seller Company [not null]
+  companyId Int [not null]
+}
+
+Table CountryToUserInformation {
+  nationalityId Int [ref: > Country.id]
+  userinfosId String [ref: > UserInformation.id]
+}
+
+Table CategoryToCompanyInformation {
+  categoriesId Int [ref: > Category.id]
+  companyinfosId String [ref: > CompanyInformation.id]
+}
+
+Enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+}
+
+Enum CompanyMemberRole {
+  MEMBER
+  MANAGER
+  OWNER
+}
+
+Enum ProductStatus {
+  INACTIVE
+  ACTIVE
+}
+
+Ref: UserInformation.userId - User.id
+
+Ref: UserVerification.userId - User.id
+
+Ref: Post.authorId > User.id
+
+Ref: RefreshToken.userId > User.id
+
+Ref: CompanyInformation.companyId - Company.id
+
+Ref: CompanyInformation.countryId > Country.id
+
+Ref: CompanyMember.companyId > Company.id
+
+Ref: CompanyMember.userId - User.id
+
+Ref: Product.companyId > Company.id
+
+Ref: Address.countryId > Country.id
+
+Ref: Address.ownerId - UserInformation.id
+
+Ref: Address.companyInfoId > CompanyInformation.id
+
+Ref: OrderProduct.orderId > Order.id
+
+Ref: Order.userId > User.id
+
+Ref: Order.companyId > Company.id

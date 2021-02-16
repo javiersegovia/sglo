@@ -1,0 +1,28 @@
+query currentUserProfileData {
+  currentUser {
+    id
+    email
+    firstName
+    lastName
+    information {
+      gender
+      birthDate
+      nationality {
+        id
+      }
+      occupation
+      address {
+        country {
+          id
+          name
+        }
+        description
+        postalCode
+      }
+    }
+  }
+  countries {
+    id
+    name
+  }
+}
